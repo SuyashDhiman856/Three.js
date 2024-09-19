@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suyash - Developer Portfolio</title>
+  
+  <!-- Include Three.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #282c34;
+    }
+
+    h1 {
+      position: absolute;
+      font-size: 4rem;
+      color: #fff;
+      z-index: 10;
+      text-align: center;
+    }
+
+    /* Styles for the 3D Canvas */
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* Optional: Add a footer or other sections */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: white;
+      background-color: #20232a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Hi, I'm a Suyash</h1>
+    <canvas id="canvas"></canvas>
+  </section>
+
+  <div class="footer">
+    <p>&copy; 2024 Suyash @ My Portfolio | All Rights Reserved</p>
+  </div>
+
+  <!-- JavaScript for 3D Animation and Moving Stars -->
+  <script>
+    // Setup scene, camera, and renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.body.appendChild(renderer.domElement);
+
+    // Create a rotating 3D cube (symbolizing code blocks)
+    const cubeGeometry = new THREE.BoxGeometry(4, 4, 4); // Create a cube
+    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x007bff, wireframe: true });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    scene.add(cube);
+
+    // Position the camera
+    camera.position.z = 15;
+
+    // Array to store star meshes
+    const stars = [];
+
+    // Function to add stars
+    function addStar() {
+      const starGeometry = new THREE.SphereGeometry(0.25, 24, 24);
+      const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const star = new THREE.Mesh(starGeometry, starMaterial);
+
+      // Randomly position the star in 3D space
+      const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(200));
+      star.position.set(x, y, z);
+      scene.add(star);
+      
+      // Add to stars array for movement
+      stars.push(star);
+    }
+
+    // Add multiple stars
+    Array(200).fill().forEach(addStar);
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate the cube to represent dynamic work
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+
+      // Move the stars slightly to create a drifting effect
+      stars.forEach(star => {
+        star.position.z += 0.1; // Adjust movement speed as needed
+        if (star.position.z > 100) { 
+          star.position.z = -100; // Reset star position to loop back
+        }
+      });
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Make sure canvas resizes with window
+    window.addEventListener('resize', () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+
+</body>
+</html>
